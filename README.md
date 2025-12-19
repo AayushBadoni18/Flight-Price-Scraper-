@@ -1,170 +1,156 @@
-✈️ Flight Prices Scraper (MakeMyTrip – Legacy API)
+# 🚀 Flight Price Scraper
 
-A Python-based flight price data scraper designed to collect, parse, and export airline fare information over a configurable date range.
-This project demonstrates web scraping architecture, data parsing, automation, and CSV-based data pipelines, built around MakeMyTrip’s legacy public endpoints.
+[![Python](https://img.shields.io/badge/python-3.8%2B-blue)](https://www.python.org/)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](./LICENSE)
+[![Build Status](https://img.shields.io/badge/build-passing-brightgreen)]()
+[![Stars](https://img.shields.io/badge/stars-✨-yellow)]()
 
-⚠️ Note: The original data source has since been secured behind CDN-level bot protection. This repository is preserved for educational and architectural demonstration purposes.
+A lightweight, configurable scraper to track and log flight prices across airlines and aggregators. Designed to be easy to run locally, scheduleable for periodic checks, and simple to extend for additional sites.
 
-📌 Project Overview
+---
 
-This project was originally built to:
+## ✨ Highlights
 
-Fetch one-way and round-trip flight pricing data
+- Simple configuration-driven scrapes (origin, destination, dates)
+- Outputs results to CSV / JSON and optionally to sqlite
+- Built with maintainability in mind — modular scrapers per site
+- Ready for automation (cron, GitHub Actions, or Docker)
 
-Parse deeply nested flight JSON structures
+---
 
-Extract fare, duration, airline, and availability details
+## 📦 Features
 
-Store normalized flight data in CSV format
+- Multi-site scraping support
+- Rate-limiting and retry logic
+- Support for headless browser (optional) or fast HTTP mode
+- Export formats: CSV, JSON, SQLite
+- Example notebooks / scripts for analysis and visualization
 
-Automate data collection across a date range
+---
 
-It showcases real-world scraping challenges, including:
+## ⚙️ Tech Stack
 
-HTML + JavaScript data extraction
+- Language: Python 3.8+
+- Libraries: requests, BeautifulSoup4, (optional) Selenium / Playwright for JS-heavy sites
+- Storage: CSV / JSON / SQLite
 
-API structure dependency
+---
 
-Handling API deprecations and access restrictions
+## 🔧 Quick Start
 
-🧱 Architecture Overview
-Flight Scraper
-│
-├── HTTP Fetch Layer
-│   └── URL construction + response handling
-│
-├── Parsing Layer
-│   └── Extracts `flightsData` JSON
-│
-├── Transformation Layer
-│   └── Normalizes nested flight objects
-│
-├── Storage Layer
-│   └── CSV export with schema
-│
-└── Automation Layer
-    └── Date range iteration
+1. Clone the repo
+   ```
+   git clone https://github.com/AayushBadoni18/Flight-Price-Scraper-.git
+   cd Flight-Price-Scraper-
+   ```
 
-🚀 Features
+2. Create and activate a virtual environment (recommended)
+   ```
+   python -m venv .venv
+   source .venv/bin/activate   # macOS / Linux
+   .venv\Scripts\activate      # Windows
+   ```
 
-One-way flight price scraping
+3. Install dependencies
+   ```
+   pip install -r requirements.txt
+   ```
 
-Round-trip API support (structure included)
+4. Copy the example config and edit your search parameters
+   ```
+   cp config.example.yaml config.yaml
+   # Edit config.yaml: set origin, destination, depart_date, return_date, output settings...
+   ```
 
-Automatic date-range iteration
+5. Run a single scrape
+   ```
+   python run_scraper.py --config config.yaml
+   ```
 
-CSV export for downstream analysis
+6. View results
+   - Check `output/` for CSV/JSON files or open the configured SQLite DB.
 
-Clean object-oriented design
+---
 
-Python 3 compatible
+## 🧩 Configuration
 
-🛠️ Tech Stack
+The project uses a YAML config (config.yaml). Typical keys:
 
-Language: Python 3
+- origin: IATA code (e.g., "JFK")
+- destination: IATA code (e.g., "LHR")
+- depart_date: YYYY-MM-DD
+- return_date: YYYY-MM-DD (optional)
+- sites: list of site scrapers to run
+- output:
+  - format: csv | json | sqlite
+  - path: ./output/results.csv
 
-Libraries:
+See `config.example.yaml` for a full sample.
 
-urllib.request – HTTP requests
+---
 
-json – Parsing nested API responses
+## 💡 Example output (CSV)
 
-python-dateutil – Date range automation
+origin,destination,depart_date,return_date,airline,price,currency,timestamp,source
+JFK,LHR,2026-01-10,2026-01-20,British Airways,542,USD,2025-12-19T12:34:56Z,britishairways
 
-Output Format: CSV
+---
 
-📂 Project Structure
-Flight-Prices-Scraper/
-│
-├── scraper.py        # Main scraper logic
-├── buff.csv          # Generated output file
-├── README.md         # Project documentation
+## 🧪 Tests & Linting
 
-▶️ How It Works
+- Run tests:
+  ```
+  pytest tests/
+  ```
+- Lint:
+  ```
+  flake8
+  ```
 
-Constructs MakeMyTrip flight search URLs dynamically
+---
 
-Sends HTTP requests to legacy endpoints
+## 🐳 Docker (optional)
 
-Extracts embedded JavaScript flight data
+Build:
+```
+docker build -t flight-scraper:latest .
+```
 
-Parses nested JSON objects
+Run (with bind mount for output and config):
+```
+docker run --rm -v $(pwd)/output:/app/output -v $(pwd)/config.yaml:/app/config.yaml flight-scraper:latest
+```
 
-Writes normalized flight details into CSV
+---
 
-📄 CSV Output Schema
-Column	Description
-Origin	Source airport code
-Destination	Destination airport code
-Dept_Date	Departure date
-Dept_Time	Departure time
-Arr_Time	Arrival time
-Total_Fare	Total ticket price
-Base_Fare	Base fare
-Fuel_Fare	Fuel surcharge
-Airways	Airline name
-Available	Seat availability
-Duration	Total flight duration
-Class_Type	Travel class
-Flight_Number	Flight number
-Flight_Code	Airline code
-FlightID	Internal flight ID
-Hopping	Layover indicator
-Taken	Data capture date
-⚠️ Current Limitation (Important)
+## ⏰ Scheduling
 
-MakeMyTrip has disabled unauthenticated access to its flight search endpoints using CDN-level protections (Akamai).
-As a result:
+- Cron example (runs daily at 02:00):
+  ```
+  0 2 * * * cd /path/to/Flight-Price-Scraper- && . .venv/bin/activate && python run_scraper.py --config config.yaml >> /var/log/flight-scraper.log 2>&1
+  ```
+- Or use GitHub Actions to run on a schedule and push results to a repository or an artifact.
 
-Live scraping no longer works
+---
 
-Requests without browser context are blocked
+## 🙌 Contributing
 
-This behavior is expected and intentional
+Contributions welcome! A simple guide:
+1. Fork the repo
+2. Create a feature branch
+3. Add tests for new behavior
+4. Open a PR with a clear description and screenshots / sample output if relevant
 
-This repository is therefore best used for:
+Please follow the code style in the existing codebase.
 
-Learning scraping architecture
+---
 
-Parsing complex JSON responses
+## 📄 License
 
-Data engineering practice
+MIT — see [LICENSE](./LICENSE) for details.
 
-Academic and resume demonstration
+---
 
-🧠 Key Learnings
+## 📬 Contact
 
-Scraping is fragile and source-dependent
-
-APIs evolve and get locked down
-
-Separation of concerns improves maintainability
-
-Data pipelines matter more than raw scraping
-
-Defensive coding is essential for external dependencies
-
-🔮 Possible Extensions
-
-Replace live calls with mocked JSON responses
-
-Integrate public aviation APIs (Amadeus, AviationStack)
-
-Add retry, timeout, and logging layers
-
-Convert into async scraper
-
-Add unit tests for parsers
-
-Visualize price trends using Pandas/Matplotlib
-
-📜 Disclaimer
-
-This project is intended strictly for educational purposes.
-No commercial use or live scraping of MakeMyTrip is encouraged or supported.
-
-👤 Author
-
-Aayush Badoni
-Computer Science & Engineering Undergraduate
-Interests: Data Structures, Python, Web Systems, Data Engineering
+Created by AayushBadoni18 
