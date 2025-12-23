@@ -1,0 +1,4 @@
+// Tuesday - 23-12-2025 
+
+It is evident that the legacy websites are no longer functional, and as a result, this project is currently affected. However, a newer version is already in development. The updated implementation will rely on APIs from alternative providers, with a complete rewrite of the codebase and the addition of a proper user interface. Further updates will be released incrementally. Thank you for your patience.
+
